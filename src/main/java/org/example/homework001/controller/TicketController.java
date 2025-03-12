@@ -20,42 +20,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class TicketController {
 
 
-    AtomicInteger counter = new AtomicInteger(5);
+    AtomicInteger counter = new AtomicInteger(9);
     ArrayList<Ticket> tickets = new ArrayList<>();
-    ArrayList<RequestTicketPost> ticketPosts = new ArrayList<>();
-
-
-    private ApiResponse<List<Ticket>> paginateTickets(String message, int offset, int limit) {
-        int totalItems = tickets.size();
-        int fromIndex = Math.min(offset, totalItems);
-        int toIndex = Math.min(offset + limit, totalItems);
-        List<Ticket> paginatedTickets = tickets.subList(fromIndex, toIndex);
-
-//        System.out.println("Paginating tickets from index " + fromIndex + " to " + toIndex);
-
-        return new ApiResponse<>(
-                true,
-                message,
-                HttpStatus.OK,
-                paginatedTickets,
-                LocalDateTime.now(),
-                offset,
-                limit,
-                totalItems
-        );
-    }
-
-
 
     public TicketController() {
         tickets.add(new Ticket(1,"Bob","2025-03-12","Kps","PP",20, false,Status.BOOKED,"A10"));
         tickets.add(new Ticket(2,"Alice","2025-03-12","PVH","SVR",20,true,Status.CANCELLED,"A11"));
         tickets.add(new Ticket(3,"John Doe","2025-03-15","SR","PP",20,false,Status.COMPLETED,"A12"));
-        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",20,true,Status.BOOKED,"A13"));
-        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",20,true,Status.BOOKED,"A13"));
-        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",20,true,Status.BOOKED,"A13"));
-        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",20,true,Status.BOOKED,"A13"));
-        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",20,true,Status.BOOKED,"A13"));
+        tickets.add(new Ticket(4,"John Mav","2025-03-18","BTB","PV",10,true,Status.BOOKED,"A13"));
+        tickets.add(new Ticket(5,"Jane Jane","2025-03-19","KOH KONG","PVH",10,true,Status.COMPLETED,"A14"));
+        tickets.add(new Ticket(6,"Junior Jr","2025-03-20","BTB","PP",25,false,Status.CANCELLED,"A15"));
+        tickets.add(new Ticket(7,"Ronaldo","2025-03-18","BTB","KPS",29,true,Status.BOOKED,"A16"));
+        tickets.add(new Ticket(8,"Messi","2025-03-19","PP","SR",40,false,Status.BOOKED,"A17"));
     }
 
     @Operation(summary = "Get all tickets")
@@ -63,7 +39,18 @@ public class TicketController {
     public ResponseEntity<ApiResponse<List<Ticket>>> getAllTickets(@RequestParam(defaultValue = "0") int offset,   // Starting point (default: 0)
                                                                    @RequestParam(defaultValue = "10") int limit){
 
-        ApiResponse<List<Ticket>> response = paginateTickets("All tickets retrieved successfully!", offset, limit);
+        int totalItems = tickets.size();
+        ApiResponse<List<Ticket>> response = new ApiResponse<>(
+                true,
+                "Retried all tickets successfully !!",
+                HttpStatus.OK,
+                tickets,
+                LocalDateTime.now(),
+                offset,
+                limit,
+                totalItems
+        );
+
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -85,80 +72,40 @@ public class TicketController {
 
         );
         tickets.add(ticket);
-
-//        int totalItems = tickets.size();
-//        int fromIndex = Math.min(offset, totalItems);
-//        int toIndex = Math.min(offset + limit, totalItems);
-//        List<Ticket> paginatedTickets = tickets.subList(fromIndex, toIndex);
         ApiResponse<Ticket> response = new ApiResponse<>(
                 true,
                 "All ticket retrieved successfully !!",
                 HttpStatus.OK,
                 ticket,
-                LocalDateTime.now(),
-                0,
-                0,
-                0
-        );
-//        return ResponseEntity.status(201).body(response);
-//        ApiResponse<List<Ticket>> response = paginateTickets("Ticket created successfully!", offset, limit);
+                LocalDateTime.now()
 
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
 
 }
-////
-////        ArrayList<Ticket> ticket = new ArrayList<>();
-////        ticket.setId(counter.getAndIncrement());
-////        ticket.setPassengerName((ticketPost.getPassengerName()));
-////        ticket.setTravelDate(ticketPost.getTravelDate());
-////        ticket.setSourceStation(ticketPost.getSourceStation());
-////        ticket.setDestinationStation(ticketPost.getDestinationStation());
-////        ticket.setPrice(ticketPost.getPrice());
-////        ticket.setPaymentStatus(ticketPost.getPaymentStatus());
-////        ticket.setStatusTicket(ticketPost.getStatusTicket());
-////        ticket.setSeatNumber(ticketPost.getSeatNumber());
-////        tickets.add(ticket);
-//        int totalItems = tickets.size();
-//        int fromIndex = Math.min(offset, totalItems);
-//        int toIndex = Math.min(offset + limit, totalItems);
-//        List<Ticket> paginatedTickets = tickets.subList(fromIndex, toIndex);
-//        ApiResponse<Ticket> response = new ApiResponse<>(
-//                true,
-//                "Ticket created successfully.",
-//                HttpStatus.CREATED,
-//                paginatedTickets,
-//                LocalDateTime.now(),
-//                offset,
-//                limit,
-//                totalItems
-//        );
-//        return ResponseEntity.status(201).body(response);
-//    }
-//
-//
-//    @Operation(summary = "Get a ticket by ID")
-//    @GetMapping("/{ticket-id}")
-//    public ResponseEntity<ApiResponse<List<Ticket>>> findTicketById(@PathVariable("ticket-id") int id){
-//        for (Ticket ticket : tickets) {
-//            if(ticket.getId() == id){
-//
-//                ApiResponse<List<Ticket>> response = new ApiResponse<>(
-//                        true,
-//                        "Ticket retrieved successfully.",
-//                        HttpStatus.OK,
-//                        tickets,
-//                        LocalDateTime.now()
-//                );
-//                return ResponseEntity.status(HttpStatus.OK).body(response);
-////                return ResponseEntity.ok(ticket);
-//            }
-//
-//        }
-//
-//        return ResponseEntity.notFound().build();
-//    }
-//
-//
+
+
+    @Operation(summary = "Get a ticket by ID")
+    @GetMapping("/{ticket-id}")
+    public ResponseEntity<ApiResponse<List<Ticket>>> findTicketById(@PathVariable("ticket-id") int id){
+        for (Ticket ticket : tickets) {
+            if(ticket.getId() == id){
+
+                ApiResponse<List<Ticket>> response = new ApiResponse<>(
+                        true,
+                        "Ticket retrieved successfully.",
+                        HttpStatus.OK,
+                        tickets,
+                        LocalDateTime.now()
+                );
+                return ResponseEntity.status(HttpStatus.OK).body(response);
+            }
+
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
     @Operation(summary = "Update an existing by ID")
     @PutMapping("{ticket-id}")
     public ResponseEntity<ApiResponse<Ticket>> updateTicket(@PathVariable("ticket-id") Integer id, @RequestBody RequestTicketPost ticketPost){
@@ -178,12 +125,8 @@ public class TicketController {
                         "Updated ticket successfully.",
                         HttpStatus.OK,
                         ticketPostUpdate,
-                        LocalDateTime.now(),
-                        0,
-                        0,
-                        0
+                        LocalDateTime.now()
                 );
-//                ApiResponse<List<Ticket>> response = paginateTickets("Updated ticket successfully!", offset, limit);
 
                 return ResponseEntity.status(HttpStatus.CREATED).body(response);
             }
@@ -202,21 +145,15 @@ public class TicketController {
                         "Ticket Deleted Successfully",
                         HttpStatus.OK,
                         null,
-                        LocalDateTime.now(),
-                        0,
-                        0,
-                        0
+                        LocalDateTime.now()
                 );
                return ResponseEntity.status(HttpStatus.OK).body(response);
             }
         }
 
-
         return ResponseEntity.notFound().build();
     }
-//
-//
-//
+
     @Operation(summary = "Search tickets by passenger name")
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<List<Ticket>>> searchTicket(@RequestParam String name){
@@ -232,35 +169,16 @@ public class TicketController {
                 // need 100 continue
                 HttpStatus.CONTINUE,
                 ticketsList,
-                LocalDateTime.now(),
-                0,
-                0,
-                0
+                LocalDateTime.now()
     );
-//        return ResponseEntity.status(HttpStatus.OK).body(response);
-
-
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-//
-//
-//
+
     @Operation(summary = "Bulk Create tickets")
     @PostMapping("/bulk")
     public ResponseEntity<ApiResponse<List<Ticket>>> addingManyTicket(@RequestBody List<RequestTicketPost> ticketPost){
         List<Ticket> ticket = new ArrayList<>();
        for(RequestTicketPost ticketPost1 : ticketPost){
-//           Ticket ticket = new Ticket();
-//           tickets.setId(counter.getAndIncrement());
-//           ticket.setPassengerName((ticketPost1.getPassengerName()));
-//           ticket.setTravelDate(ticketPost1.getTravelDate());
-//           ticket.setSourceStation(ticketPost1.getSourceStation());
-//           ticket.setDestinationStation(ticketPost1.getDestinationStation());
-//           ticket.setPrice(ticketPost1.getPrice());
-//           ticket.setPaymentStatus(ticketPost1.getPaymentStatus());
-//           ticket.setStatusTicket(ticketPost1.getStatusTicket());
-//           ticket.setSeatNumber(ticketPost1.getSeatNumber());
            ticket.add(new Ticket(
                    counter.getAndIncrement(),
                    ticketPost1.getPassengerName(),
@@ -280,25 +198,18 @@ public class TicketController {
                "Bulk tickets created successfully",
                HttpStatus.CREATED,
                ticket,
-               LocalDateTime.now(),
-               0,
-               0,
-               0
+               LocalDateTime.now()
        );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-//
-//
-//
-//
+
     @Operation(summary = "Filter tickets by status and travel date")
     @GetMapping("/filter")
     public ResponseEntity<ApiResponse<List<Ticket>>> filter(@RequestParam Status status , @RequestParam String localDate ){
         ArrayList<Ticket> ticketsList = new ArrayList<>();
         for(Ticket ticket : tickets){
             if(ticket.getTravelDate().equals(localDate) && ticket.getStatusTicket().equals(status)){
-//                System.out.println(ticket);
                 ticketsList.add(ticket);
 
             }
@@ -308,21 +219,13 @@ public class TicketController {
                 "Filter successfully !!",
                 HttpStatus.OK,
                 ticketsList,
-                LocalDateTime.now(),
-                0,
-                0,
-                0
+                LocalDateTime.now()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
-//        return ResponseEntity.status(HttpStatus.OK).body(ticketsList);
-//        List<Ticket> filterTickets = tickets.stream()
-//                .filter(ticket -> ticket.getStatusTicket().equals(status.name()))
-//        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-//
-//
+
     @Operation(summary = "Bulk update payment status for multiple tickets")
     @PutMapping("/tickets")
     public ResponseEntity<ApiResponse<List<Ticket>>> updatePaymentStatus(@RequestBody RequestTicketIDs ticketIDs){
@@ -344,16 +247,10 @@ public class TicketController {
                 "Updated successfully",
                 HttpStatus.FOUND,
                 updateTickets,
-                LocalDateTime.now(),
-                0,
-                0,
-                0
+                LocalDateTime.now()
         );
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-//
-
-
 
 }
