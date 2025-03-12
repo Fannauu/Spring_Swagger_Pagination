@@ -16,9 +16,10 @@ public class ApiResponse<T> {
     private boolean success;
     private String message;
     private HttpStatus status;
-
-
     private T payLoad;
     private LocalDateTime timestamp;
+    private int offset;      // Starting point
+    private int limit;       // Max items to return
+    private long totalItems;
 
 }
